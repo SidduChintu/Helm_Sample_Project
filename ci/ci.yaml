@@ -1,0 +1,28 @@
+#This is a workflow which runs on a push to main, and 
+#-Ensures that charrs pass sijple(helm template) validation.
+#-Uploads charts to Artifactory if they do not already exists
+
+name: CI
+on:
+  push:
+    branches: main
+jobs:
+  upload:
+    name: Uplaod
+    runs-on: <Runner-name>
+    steps:
+    - name: Checkout
+      uses: action/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.9.0
+      
+    - name: Upload
+      run: ./ci/ci.sh
+      env:
+        USER: ${{ secrets.ARTI_USER }}
+        PASS: ${{ secrets.ARTI_PASS }}
